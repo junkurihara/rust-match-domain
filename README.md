@@ -1,4 +1,9 @@
-# rust-match-domain
+# `match-domain`: Rapid checker for the prefix and suffix matching of domain names, written in Rust
+
+[![match-domain](https://img.shields.io/crates/v/match-domain.svg)](https://crates.io/crates/match-domain)
+[![match-domain](https://docs.rs/match-domain/badge.svg)](https://docs.rs/match-domain)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+![Unit Test](https://github.com/junkurihara/doh-auth-proxy/actions/workflows/test.yml/badge.svg)
 
 Double-array trie based domain matcher, written in Rust.
 
