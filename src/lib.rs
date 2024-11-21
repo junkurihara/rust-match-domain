@@ -54,6 +54,16 @@ impl TryFrom<Vec<String>> for DomainMatchingRule {
   }
 }
 
+impl TryFrom<&[String]> for DomainMatchingRule {
+  type Error = Error;
+
+  /// Populate the domain matching rule from a list of domains
+  fn try_from(domain_list: &[String]) -> Result<Self, Self::Error> {
+    let domain_list: Vec<&str> = domain_list.iter().map(AsRef::as_ref).collect();
+    DomainMatchingRule::try_from(domain_list)
+  }
+}
+
 impl TryFrom<&[&str]> for DomainMatchingRule {
   type Error = Error;
 
