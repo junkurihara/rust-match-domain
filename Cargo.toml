@@ -9,7 +9,6 @@ readme = "./README.md"
 edition = "2021"
 categories = ["network-programming"]
 keywords = ["dns", "domain", "blocklist", "allowlist"]
-publish = false
 
 [dependencies]
 # tracing
