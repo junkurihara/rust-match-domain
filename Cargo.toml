@@ -1,5 +1,6 @@
 [package]
 name = "match-domain"
+description = "Rapid checker for the prefix and suffix matching of domain names"
 version = "0.1.0"
 authors = ["Jun Kurihara"]
 homepage = "https://github.com/junkurihara/rust-match-domain"
