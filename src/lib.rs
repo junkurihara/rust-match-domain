@@ -118,33 +118,35 @@ impl TryFrom<&[&str]> for DomainMatchingRule {
 }
 
 /* --------------------------------------------------------------------- */
+#[inline]
+/// Helper function to find the matched items in trie
+fn find_match<'a>(name: &'a str, ceder: &'a Cedar, dict: &'a [String]) -> impl Iterator<Item = String> + 'a {
+  ceder.common_prefix_iter(name).map(|(x, _)| dict[x as usize].clone())
+}
+
 impl DomainMatchingRule {
-  /// Check if a domain is contained in the list of suffixes
-  pub fn find_suffix_match(&self, domain_name: &str) -> bool {
-    let rev_nn = reverse_string(domain_name);
-    let matched_items = self
-      .suffix_cedar
-      .common_prefix_iter(&rev_nn)
-      .map(|(x, _)| self.suffix_dict[x as usize].clone());
+  /// Find a domain contained in the list of suffixes.
+  /// Returns the first match. If not found, return None.
+  fn find_suffix_match(&self, domain_name: &str) -> Option<String> {
+    let reverse_domain_name = reverse_string(domain_name);
+    let matched_items = find_match(&reverse_domain_name, &self.suffix_cedar, &self.suffix_dict);
 
     let mut matched_as_domain = matched_items.filter(|found| {
-      if found.len() == rev_nn.len() {
+      if found.len() == reverse_domain_name.len() {
         true
-      } else if let Some(nth) = rev_nn.chars().nth(found.chars().count()) {
+      } else if let Some(nth) = reverse_domain_name.chars().nth(found.chars().count()) {
         nth.to_string() == "."
       } else {
         false
       }
     });
-    matched_as_domain.next().is_some()
+    matched_as_domain.next()
   }
 
-  /// Check if a domain is contained in the list of prefixes
-  fn find_prefix_match(&self, domain_name: &str) -> bool {
-    let matched_items = self
-      .prefix_cedar
-      .common_prefix_iter(domain_name)
-      .map(|(x, _)| self.prefix_dict[x as usize].clone());
+  /// Find a domain contained in the list of prefixes.
+  /// Returns the first match. If not found, return None.
+  fn find_prefix_match(&self, domain_name: &str) -> Option<String> {
+    let matched_items = find_match(domain_name, &self.prefix_cedar, &self.prefix_dict);
 
     let mut matched_as_domain = matched_items.filter(|found| {
       if let Some(nth) = domain_name.chars().nth(found.chars().count()) {
@@ -153,7 +155,7 @@ impl DomainMatchingRule {
         false
       }
     });
-    matched_as_domain.next().is_some()
+    matched_as_domain.next()
   }
 
   /// Check if a domain is contained in the list of prefixes or suffixes
@@ -161,13 +163,11 @@ impl DomainMatchingRule {
   /// - the argument `domain_name` should be in lowercase
   /// - the argument `domain_name` should not contain a leading dot
   pub fn is_matched(&self, domain_name: &str) -> bool {
-    if self.find_suffix_match(domain_name) {
-      tracing::debug!("[with cw] suffix/exact match found: {}", domain_name);
+    if self.find_suffix_match(domain_name).is_some() {
       return true;
     }
 
-    if self.find_prefix_match(domain_name) {
-      tracing::debug!("[with cw] prefix match found: {}", domain_name);
+    if self.find_prefix_match(domain_name).is_some() {
       return true;
     }
 

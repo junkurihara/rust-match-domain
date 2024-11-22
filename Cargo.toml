@@ -1,7 +1,7 @@
 [package]
 name = "match-domain"
 description = "Rapid checker for the prefix and suffix matching of domain names"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Jun Kurihara"]
 homepage = "https://github.com/junkurihara/rust-match-domain"
 repository = "https://github.com/junkurihara/rust-match-domain"
@@ -12,9 +12,6 @@ categories = ["network-programming"]
 keywords = ["dns", "domain", "blocklist", "allowlist"]
 
 [dependencies]
-# tracing
-tracing = { version = "0.1.40" }
-
 # error handling
 thiserror = { version = "2.0.3" }
 
